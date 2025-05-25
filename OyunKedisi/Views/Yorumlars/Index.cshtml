@@ -1,0 +1,267 @@
+﻿@model IEnumerable<OyunKedisi.Models.Yorumlar>
+
+@{
+    ViewData["Title"] = "Yorum Yönetimi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col">
+            <h1 class="h3">Yorum Yönetimi</h1>
+        </div>
+        <div class="col text-end">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#yorumEkleModal">
+                <i class="fas fa-plus"></i> Yeni Yorum
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="yorumlarTable">
+                    <thead>
+                        <tr>
+                            <th>Yorum</th>
+                            <th>Kullanıcı</th>
+                            <th>Oyun</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="yorum-satir-@item.Id">
+                                <td class="yorum-icerik">@item.Yorumlar1</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="https://ui-avatars.com/api/?name=@item.User?.KullaniciAdi" class="rounded-circle me-2" width="32" height="32" alt="@item.User?.KullaniciAdi">
+                                        @item.User?.KullaniciAdi
+                                    </div>
+                                </td>
+                                <td>@item.Oyun?.OyunAdi</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-primary yorum-duzenle" data-yorum-id="@item.Id" title="Düzenle">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger yorum-sil" data-yorum-id="@item.Id" title="Sil">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Yorum Ekleme Modal -->
+<div class="modal fade" id="yorumEkleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Yeni Yorum Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="yorumEkleForm">
+                    <div class="mb-3">
+                        <label class="form-label">Kullanıcı</label>
+                        <select name="UserId" class="form-select" required>
+                            @foreach (var user in ViewBag.Users)
+                            {
+                                <option value="@user.Value">@user.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Oyun</label>
+                        <select name="OyunId" class="form-select" required>
+                            @foreach (var oyun in ViewBag.Oyunlar)
+                            {
+                                <option value="@oyun.Value">@oyun.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Yorum</label>
+                        <textarea name="Yorumlar1" class="form-control" rows="3" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="yorumEkleKaydet">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Yorum Düzenleme Modal -->
+<div class="modal fade" id="yorumDuzenleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Yorum Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="yorumDuzenleForm">
+                    <input type="hidden" name="Id" />
+                    <div class="mb-3">
+                        <label class="form-label">Yorum</label>
+                        <textarea name="Yorumlar1" class="form-control" rows="3" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="yorumDuzenleKaydet">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // DataTable başlatma
+            var table = $('#yorumlarTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
+                }
+            });
+
+            // Yorum ekleme
+            $('#yorumEkleKaydet').click(function() {
+                var form = $('#yorumEkleForm');
+                var formData = {
+                    UserId: form.find('select[name="UserId"]').val(),
+                    OyunId: form.find('select[name="OyunId"]').val(),
+                    Yorumlar1: form.find('textarea[name="Yorumlar1"]').val()
+                };
+
+                $.ajax({
+                    url: '/Yorumlars/Create',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            var yorum = response.yorum;
+                            var yeniSatir = `
+                                <tr id="yorum-satir-${yorum.id}">
+                                    <td class="yorum-icerik">${yorum.yorumlar1}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="https://ui-avatars.com/api/?name=${yorum.user.kullaniciAdi}" class="rounded-circle me-2" width="32" height="32" alt="${yorum.user.kullaniciAdi}">
+                                            ${yorum.user.kullaniciAdi}
+                                        </div>
+                                    </td>
+                                    <td>${yorum.oyun.oyunAdi}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-primary yorum-duzenle" data-yorum-id="${yorum.id}" title="Düzenle">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger yorum-sil" data-yorum-id="${yorum.id}" title="Sil">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                            table.row.add($(yeniSatir)).draw();
+                            $('#yorumEkleModal').modal('hide');
+                            form[0].reset();
+                        } else {
+                            alert('Yorum eklenirken bir hata oluştu: ' + response.errors.join('\n'));
+                        }
+                    },
+                    error: function() {
+                        alert('Yorum eklenirken bir hata oluştu.');
+                    }
+                });
+            });
+
+            // Yorum düzenleme modalını aç
+            $(document).on('click', '.yorum-duzenle', function() {
+                var yorumId = $(this).data('yorum-id');
+                var satir = $('#yorum-satir-' + yorumId);
+                var yorumIcerik = satir.find('.yorum-icerik').text();
+
+                var form = $('#yorumDuzenleForm');
+                form.find('input[name="Id"]').val(yorumId);
+                form.find('textarea[name="Yorumlar1"]').val(yorumIcerik);
+
+                $('#yorumDuzenleModal').modal('show');
+            });
+
+            // Yorum düzenleme kaydet
+            $('#yorumDuzenleKaydet').click(function() {
+                var form = $('#yorumDuzenleForm');
+                var yorumId = form.find('input[name="Id"]').val();
+                var yeniYorum = form.find('textarea[name="Yorumlar1"]').val();
+
+                $.ajax({
+                    url: '/Yorumlars/Edit',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        Id: yorumId,
+                        Yorumlar1: yeniYorum
+                    }),
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#yorum-satir-' + yorumId).find('.yorum-icerik').text(yeniYorum);
+                            $('#yorumDuzenleModal').modal('hide');
+                        } else {
+                            alert('Yorum düzenlenirken bir hata oluştu: ' + response.errors.join('\n'));
+                        }
+                    },
+                    error: function() {
+                        alert('Yorum düzenlenirken bir hata oluştu.');
+                    }
+                });
+            });
+
+            // Yorum silme
+            $(document).on('click', '.yorum-sil', function() {
+                if (confirm('Bu yorumu silmek istediğinizden emin misiniz?')) {
+                    var yorumId = $(this).data('yorum-id');
+                    var satir = $('#yorum-satir-' + yorumId);
+
+                    $.ajax({
+                        url: '/Yorumlars/Delete',
+                        type: 'POST',
+                        data: { id: yorumId },
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                table.row(satir).remove().draw();
+                            } else {
+                                alert('Yorum silinirken bir hata oluştu: ' + response.error);
+                            }
+                        },
+                        error: function() {
+                            alert('Yorum silinirken bir hata oluştu.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

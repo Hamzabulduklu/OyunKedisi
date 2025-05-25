@@ -1,0 +1,886 @@
+﻿@model IEnumerable<OyunKedisi.Models.Oyunlar>
+
+@{
+    ViewData["Title"] = "Ana Sayfa";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    :root {
+        --primary-purple: #6a0dad;
+        --light-purple: #9F7AEA;
+        --primary-orange: #ff8c00;
+        --light-orange: #ffd280;
+        --very-light-orange: #fff1dc;
+    }
+
+    body {
+        background-color: #f8f9fb;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, var(--primary-purple), var(--primary-orange));
+        padding: 4rem 0;
+        margin-bottom: 3rem;
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        border-radius: 0 0 30px 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 0 L100 50 L50 100 L0 50 Z" fill="rgba(255,255,255,0.05)"/></svg>');
+        background-size: 30px 30px;
+        opacity: 0.3;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-title {
+        font-size: 3.2rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        background: linear-gradient(135deg, white, var(--light-orange));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+        font-size: 1.25rem;
+        opacity: 0.95;
+        margin-bottom: 2.5rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-btn {
+        background: white;
+        color: var(--primary-purple);
+        border: none;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .hero-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        background: var(--light-orange);
+        color: var(--primary-purple);
+    }
+
+    .hero-btn i {
+        margin-right: 8px;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        text-align: center;
+        color: var(--primary-purple);
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    .section-title::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-purple), var(--primary-orange));
+        border-radius: 2px;
+    }
+
+    .filter-bar {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        margin-bottom: 3rem;
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .filter-input {
+        flex: 1;
+        padding: 1rem 1.5rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background-color: #f8f9fb;
+    }
+
+    .filter-input:focus {
+        border-color: var(--primary-orange);
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.1);
+        background-color: white;
+    }
+
+    .filter-select {
+        padding: 1rem 1.5rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        background: #f8f9fb;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 180px;
+    }
+
+    .filter-select:focus {
+        border-color: var(--primary-orange);
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.1);
+        background-color: white;
+    }
+
+    .filter-icon {
+        margin-right: 10px;
+        color: var(--primary-orange);
+    }
+
+    .game-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+
+    .game-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        position: relative;
+        border: 1px solid rgba(0,0,0,0.03);
+    }
+
+    .game-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        border-color: var(--light-orange);
+    }
+
+    .game-image {
+        position: relative;
+        padding-top: 60%;
+        overflow: hidden;
+    }
+
+    .game-image img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .game-card:hover .game-image img {
+        transform: scale(1.08);
+    }
+
+    .favorite-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.85);
+        border: none;
+        color: #777;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 1;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .favorite-btn:hover {
+        background: white;
+        transform: scale(1.15);
+        color: var(--primary-orange);
+    }
+
+    .favorite-btn i {
+        font-size: 1.25rem;
+    }
+
+    .favorite-btn.favorited {
+        background: var(--primary-orange);
+        color: white;
+    }
+
+    .favorite-btn.favorited:hover {
+        background: var(--light-orange);
+        color: var(--primary-purple);
+    }
+
+    .game-content {
+        padding: 1.5rem;
+    }
+
+    .game-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--primary-purple);
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        transition: color 0.3s ease;
+    }
+
+    .game-card:hover .game-title {
+        color: var(--primary-orange);
+    }
+
+    .game-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.95rem;
+        color: #666;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .game-user {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .game-user img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 2px solid var(--light-orange);
+    }
+
+    .game-user span {
+        font-weight: 500;
+    }
+
+    .game-cta {
+        background: var(--very-light-orange);
+        border-radius: 30px;
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--primary-orange);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    .game-cta i {
+        margin-left: 6px;
+        font-size: 0.8rem;
+    }
+
+    .game-cta:hover {
+        background: var(--primary-orange);
+        color: white;
+    }
+
+    .no-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #f0f0f0, #e5e5e5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-purple);
+    }
+
+    .no-image i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.7;
+    }
+
+    .no-image span {
+        font-size: 1rem;
+        font-weight: 500;
+        opacity: 0.8;
+    }
+
+    @@media (max-width: 991px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.1rem;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .hero-section {
+            padding: 3rem 0;
+        }
+        
+        .hero-title {
+            font-size: 2.2rem;
+        }
+        
+        .filter-bar {
+            flex-direction: column;
+            padding: 1.2rem;
+        }
+
+        .filter-input,
+        .filter-select {
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+        }
+
+        .game-grid {
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.75rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .hero-title {
+            font-size: 1.8rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+        
+        .hero-btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+        }
+        
+        .game-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .pulse-animation {
+        animation: pulse 2s infinite;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 0;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        color: var(--light-orange);
+    }
+
+    .empty-state h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--primary-purple);
+    }
+
+    .empty-state p {
+        font-size: 1.1rem;
+        color: #666;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+<div class="hero-section">
+    <div class="container hero-content">
+        <h1 class="hero-title">Oyun Dünyasına Hoş Geldiniz</h1>
+        <p class="hero-subtitle">En yeni ve popüler oyunları keşfedin, favori oyunlarınızı kaydedin ve arkadaşlarınıza önerin. Oyun tutkunları için özel bir platform.</p>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a asp-controller="Oyunlars" asp-action="Create" class="hero-btn">
+                <i class="fas fa-plus"></i> Yeni Oyun Ekle
+            </a>
+        }
+        else
+        {
+            <a asp-controller="Users" asp-action="Login" class="hero-btn">
+                <i class="fas fa-sign-in-alt"></i> Giriş Yap
+            </a>
+        }
+    </div>
+</div>
+
+<div class="container">
+    <h2 class="section-title">Keşfedilecek Oyunlar</h2>
+    
+    <div class="filter-bar">
+        <input type="text" id="search" class="filter-input" placeholder="Oyun ara...">
+        <select id="sort" class="filter-select">
+            <option value="name">İsme Göre</option>
+            <option value="favorites">Favori Sayısına Göre</option>
+            <option value="newest">En Yeni Eklenenlere Göre</option>
+        </select>
+    </div>
+
+    @if (Model.Count() == 0)
+    {
+        <div class="empty-state">
+            <i class="fas fa-gamepad"></i>
+            <h3>Henüz hiç oyun yok</h3>
+            <p>İlk oyunu eklemek için hemen harekete geçin!</p>
+            <a asp-controller="Oyunlars" asp-action="Create" class="hero-btn">
+                <i class="fas fa-plus"></i> Yeni Oyun Ekle
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="game-grid">
+            @foreach (var item in Model)
+            {
+                <div class="game-card" data-eklenmetarihi="@item.EklemeTarihi.ToString("yyyy-MM-ddTHH:mm:ss")">
+                    <button class="favorite-btn" data-game-id="@item.Id" title="Favorilere Ekle">
+                        <i class="far fa-star"></i>
+                    </button>
+                    
+                    <div class="game-image">
+                        @if (!string.IsNullOrEmpty(item.OyunFotograflari))
+                        {
+                            <img src="@item.OyunFotograflari" alt="@item.OyunAdi" loading="lazy">
+                        }
+                        else
+                        {
+                            <div class="no-image">
+                                <i class="fas fa-gamepad"></i>
+                                <span>Fotoğraf Yok</span>
+                            </div>
+                        }
+                    </div>
+                    
+                    <div class="game-content">
+                        <h3 class="game-title">@item.OyunAdi</h3>
+                        <div class="game-meta">
+                            <div class="game-user">
+                                <img src="https://ui-avatars.com/api/?name=@item.User.KullaniciAdi&background=ff8c00&color=fff" alt="@item.User.KullaniciAdi">
+                                <span>@item.User.KullaniciAdi</span>
+                            </div>
+                            
+                            @if (!string.IsNullOrEmpty(item.OyunLinki))
+                            {
+                                <a href="@item.OyunLinki" target="_blank" class="game-cta">
+                                    Ziyaret Et <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            }
+                        </div>
+                        <div style="margin-top: 0.5rem; color: #ff8c00; font-size: 0.95rem; font-weight: 500;">
+                            <i class="fas fa-calendar-alt"></i> @item.EklemeTarihi.ToString("dd.MM.yyyy")
+                        </div>
+                        <!-- Yorumlar Alanı Başlangıç -->
+                        <div class="mt-3">
+                            <h6 class="fw-bold">Yorumlar</h6>
+                            <div id="yorumlar-@item.Id" class="mb-2" style="max-height: 120px; overflow-y: auto;">
+                                @if (item.Yorumlars != null && item.Yorumlars.Any())
+                                {
+                                    foreach (var yorum in item.Yorumlars.OrderByDescending(y => y.Id))
+                                    {
+                                        <div class="border-bottom pb-2 mb-2" id="yorum-@yorum.Id">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <img src="https://ui-avatars.com/api/?name=@yorum.User?.KullaniciAdi" class="rounded-circle me-2" width="24" height="24" alt="@yorum.User?.KullaniciAdi">
+                                                <span class="fw-semibold">@yorum.User?.KullaniciAdi</span>
+                                                @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || yorum.UserId.ToString() == User.FindFirst("UserId")?.Value))
+                                                {
+                                                    <div class="ms-auto">
+                                                        <button class="btn btn-sm btn-link text-primary yorum-duzenle" data-yorum-id="@yorum.Id" title="Düzenle">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-link text-danger yorum-sil" data-yorum-id="@yorum.Id" title="Sil">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="ps-4 small yorum-icerik">@yorum.Yorumlar1</div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="text-muted small">Henüz yorum yok.</div>
+                                }
+                            </div>
+                            <div class="yorum-ekle-kutu p-3 bg-light rounded shadow-sm">
+                                <h6 class="fw-bold mb-2" style="font-size:1rem;">Yorum Yaz</h6>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <form class="yorum-form" data-oyun-id="@item.Id">
+                                        <input type="hidden" name="UserId" value="@User.FindFirst("UserId")?.Value" />
+                                        <div class="d-flex align-items-end gap-2">
+                                            <textarea name="Yorumlar1" class="form-control form-control-sm" rows="2" placeholder="Yorumunuzu yazın..." required style="resize:none;max-width:70%"></textarea>
+                                            <button type="submit" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-paper-plane"></i> Gönder
+                                            </button>
+                                        </div>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-warning py-2 px-3 mb-0" style="font-size:0.95rem;">Yorum yazmak için <a href='/Users/Login'>giriş yapın</a>.</div>
+                                }
+                            </div>
+                        </div>
+                        <!-- Yorumlar Alanı Bitiş -->
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const searchInput = document.getElementById('search');
+            const sortSelect = document.getElementById('sort');
+            const gameGrid = document.querySelector('.game-grid');
+            const gameCards = Array.from(document.querySelectorAll('.game-card'));
+            let userFavorites = [];
+
+            // Kullanıcı giriş yapmışsa favori durumlarını yükle
+            if (document.querySelector('input[name="__RequestVerificationToken"]')) {
+                try {
+                    const response = await fetch('/Favoris/GetUserFavorites');
+                    if (response.ok) {
+                        userFavorites = await response.json();
+                        // Favori durumlarını güncelle
+                        gameCards.forEach(card => {
+                            const gameId = parseInt(card.querySelector('.favorite-btn').dataset.gameId);
+                            if (userFavorites.includes(gameId)) {
+                                const btn = card.querySelector('.favorite-btn');
+                                const icon = btn.querySelector('i');
+                                btn.classList.add('favorited');
+                                icon.classList.remove('far');
+                                icon.classList.add('fas');
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error('Favori durumları yüklenirken hata oluştu:', error);
+                }
+            }
+
+            // Arama fonksiyonu
+            searchInput.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                filterGames(searchTerm);
+            });
+
+            // Sıralama fonksiyonu
+            sortSelect.addEventListener('change', function(e) {
+                const sortBy = e.target.value;
+                sortGames(sortBy);
+            });
+
+            function filterGames(searchTerm) {
+                gameCards.forEach(card => {
+                    const title = card.querySelector('.game-title').textContent.toLowerCase();
+                    if (title.includes(searchTerm)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            function sortGames(sortBy) {
+                const sortedCards = [...gameCards].sort((a, b) => {
+                    switch(sortBy) {
+                        case 'name':
+                            return a.querySelector('.game-title').textContent.localeCompare(
+                                b.querySelector('.game-title').textContent
+                            );
+                        case 'favorites':
+                            // Burada favori sayısına göre sıralama yapılacak
+                            return 0;
+                        case 'newest':
+                            // EklenmeTarihi'ne göre sıralama
+                            const dateA = new Date(a.querySelector('[data-eklenmetarihi]').getAttribute('data-eklenmetarihi'));
+                            const dateB = new Date(b.querySelector('[data-eklenmetarihi]').getAttribute('data-eklenmetarihi'));
+                            return dateB - dateA;
+                        default:
+                            return 0;
+                    }
+                });
+
+                gameGrid.innerHTML = '';
+                sortedCards.forEach(card => gameGrid.appendChild(card));
+            }
+
+            // Favori butonu işlemleri
+            document.querySelectorAll('.favorite-btn').forEach(button => {
+                button.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const gameId = parseInt(this.dataset.gameId);
+                    const icon = this.querySelector('i');
+                    
+                    // Önce UI'ı güncelle
+                    this.classList.toggle('favorited');
+                    icon.classList.toggle('far');
+                    icon.classList.toggle('fas');
+                    
+                    // Favori listesini güncelle
+                    const index = userFavorites.indexOf(gameId);
+                    if (index === -1) {
+                        userFavorites.push(gameId);
+                    } else {
+                        userFavorites.splice(index, 1);
+                    }
+                    
+                    try {
+                        const response = await fetch(`/Favoris/ToggleFavorite/${gameId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                            }
+                        });
+                        
+                        if (!response.ok) {
+                            // İşlem başarısız olursa UI'ı geri al
+                            this.classList.toggle('favorited');
+                            icon.classList.toggle('far');
+                            icon.classList.toggle('fas');
+                            
+                            if (response.status === 401) {
+                                window.location.href = '/Users/Login';
+                            }
+                        }
+                    } catch (error) {
+                        // Hata durumunda UI'ı geri al
+                        this.classList.toggle('favorited');
+                        icon.classList.toggle('far');
+                        icon.classList.toggle('fas');
+                        console.error('Favori işlemi sırasında bir hata oluştu:', error);
+                    }
+                });
+            });
+
+            // Oyun kartlarına tıklandığında oyun sayfasına git
+            document.querySelectorAll('.game-card').forEach(card => {
+                const gameImage = card.querySelector('.game-image');
+                const gameLink = card.querySelector('.game-cta');
+                
+                if (gameLink) {
+                    gameImage.addEventListener('click', function() {
+                        window.open(gameLink.href, '_blank');
+                    });
+                    gameImage.style.cursor = 'pointer';
+                }
+            });
+        });
+
+        $(document).ready(function() {
+            // Yorum ekleme
+            $('.yorum-form').on('submit', function(e) {
+                e.preventDefault();
+                var form = $(this);
+                var oyunId = form.data('oyun-id');
+                var yorumData = {
+                    UserId: parseInt(form.find('input[name="UserId"]').val()),
+                    OyunId: parseInt(oyunId),
+                    Yorumlar1: form.find('textarea[name="Yorumlar1"]').val()
+                };
+
+                console.log('Gönderilen veri:', yorumData);
+
+                $.ajax({
+                    url: '/Yorumlars/Create',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(yorumData),
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        console.log('Sunucu yanıtı:', response);
+                        if (response.success) {
+                            var yorum = response.yorum;
+                            var yorumHtml = `
+                                <div class="border-bottom pb-2 mb-2" id="yorum-${yorum.id}">
+                                    <div class="d-flex align-items-center mb-1">
+                                        <img src="https://ui-avatars.com/api/?name=${yorum.user.kullaniciAdi}" class="rounded-circle me-2" width="24" height="24" alt="${yorum.user.kullaniciAdi}">
+                                        <span class="fw-semibold">${yorum.user.kullaniciAdi}</span>
+                                        <div class="ms-auto">
+                                            <button class="btn btn-sm btn-link text-primary yorum-duzenle" data-yorum-id="${yorum.id}" title="Düzenle">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-link text-danger yorum-sil" data-yorum-id="${yorum.id}" title="Sil">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="ps-4 small yorum-icerik">${yorum.yorumlar1}</div>
+                                </div>
+                            `;
+                            $('#yorumlar-' + oyunId).prepend(yorumHtml);
+                            form.find('textarea[name="Yorumlar1"]').val('');
+                        } else {
+                            var errorMessage = response.errors ? response.errors.join('\n') : response.error;
+                            alert('Yorum eklenirken bir hata oluştu: ' + errorMessage);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX hatası:', {xhr: xhr, status: status, error: error});
+                        alert('Yorum eklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+                    }
+                });
+            });
+
+            // Yorum düzenleme
+            $(document).on('click', '.yorum-duzenle', function() {
+                var yorumId = $(this).data('yorum-id');
+                var yorumDiv = $('#yorum-' + yorumId);
+                var yorumIcerik = yorumDiv.find('.yorum-icerik');
+                var mevcutYorum = yorumIcerik.text();
+                
+                yorumIcerik.html(`
+                    <form class="yorum-duzenle-form">
+                        <div class="d-flex gap-2">
+                            <textarea class="form-control form-control-sm" rows="2">${mevcutYorum}</textarea>
+                            <button type="submit" class="btn btn-sm btn-primary">
+                                <i class="fas fa-save"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-secondary yorum-duzenle-iptal">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </form>
+                `);
+            });
+
+            // Yorum düzenleme iptal
+            $(document).on('click', '.yorum-duzenle-iptal', function() {
+                var yorumId = $(this).closest('[id^="yorum-"]').attr('id').split('-')[1];
+                var yorumDiv = $('#yorum-' + yorumId);
+                var yorumIcerik = yorumDiv.find('.yorum-icerik');
+                var mevcutYorum = yorumIcerik.find('textarea').val();
+                yorumIcerik.text(mevcutYorum);
+            });
+
+            // Yorum düzenleme kaydet
+            $(document).on('submit', '.yorum-duzenle-form', function(e) {
+                e.preventDefault();
+                var form = $(this);
+                var yorumDiv = form.closest('[id^="yorum-"]');
+                var yorumId = yorumDiv.attr('id').split('-')[1];
+                var yeniYorum = form.find('textarea').val();
+
+                $.ajax({
+                    url: '/Yorumlars/Edit',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        Id: yorumId,
+                        Yorumlar1: yeniYorum
+                    }),
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            yorumDiv.find('.yorum-icerik').text(yeniYorum);
+                        } else {
+                            alert('Yorum düzenlenirken bir hata oluştu: ' + response.errors.join('\n'));
+                        }
+                    },
+                    error: function() {
+                        alert('Yorum düzenlenirken bir hata oluştu.');
+                    }
+                });
+            });
+
+            // Yorum silme
+            $(document).on('click', '.yorum-sil', function() {
+                if (confirm('Bu yorumu silmek istediğinizden emin misiniz?')) {
+                    var yorumId = $(this).data('yorum-id');
+                    var yorumDiv = $('#yorum-' + yorumId);
+
+                    $.ajax({
+                        url: '/Yorumlars/Delete',
+                        type: 'POST',
+                        data: { id: yorumId },
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                yorumDiv.remove();
+                                var yorumlarDiv = yorumDiv.closest('[id^="yorumlar-"]');
+                                if (yorumlarDiv.children().length === 0) {
+                                    yorumlarDiv.html('<div class="text-muted small">Henüz yorum yok.</div>');
+                                }
+                            } else {
+                                alert('Yorum silinirken bir hata oluştu: ' + response.error);
+                            }
+                        },
+                        error: function() {
+                            alert('Yorum silinirken bir hata oluştu.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

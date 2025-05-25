@@ -1,0 +1,73 @@
+﻿@model OyunKedisi.Models.User
+
+@{
+    ViewData["Title"] = "Kullanıcı Detayları";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col">
+            <h1 class="h3">Kullanıcı Detayları</h1>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 text-center mb-4">
+                    <img src="https://ui-avatars.com/api/?name=@Model.KullaniciAdi&size=200" class="img-fluid rounded-circle" alt="@Model.KullaniciAdi">
+                    <h4 class="mt-3">@Model.KullaniciAdi</h4>
+                    <span class="badge bg-@(Model.Yetki?.YetkiAdi == "Admin" ? "danger" : "primary")">
+                        @Model.Yetki?.YetkiAdi
+                    </span>
+                </div>
+                
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">E-posta</label>
+                                <p>@Model.Mail</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Yaş</label>
+                                <p>@Model.Yas</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Kayıt Tarihi</label>
+                                <p>@Model.KayitTarihi.ToString("dd.MM.yyyy HH:mm")</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Yetki</label>
+                                <p>@Model.Yetki?.YetkiAdi</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col">
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Düzenle
+                            </a>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Listeye Dön
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

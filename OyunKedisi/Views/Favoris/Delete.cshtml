@@ -1,0 +1,67 @@
+﻿@model OyunKedisi.Models.Favori
+
+@{
+    ViewData["Title"] = "Favori Sil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Favori Sil</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Uyarı!</strong> Bu favoriyi silmek istediğinizden emin misiniz?
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            @if (!string.IsNullOrEmpty(Model.Oyun?.OyunFotograflari))
+                            {
+                                <img src="@Model.Oyun.OyunFotograflari" alt="@Model.Oyun.OyunAdi" class="img-fluid rounded">
+                            }
+                            else
+                            {
+                                <div class="bg-light rounded p-4 text-center">
+                                    <i class="fas fa-gamepad fa-3x text-muted"></i>
+                                    <p class="mt-2 mb-0">Fotoğraf Yok</p>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-8">
+                            <dl class="row">
+                                <dt class="col-sm-4">Oyun Adı</dt>
+                                <dd class="col-sm-8">@Model.Oyun?.OyunAdi</dd>
+
+                                <dt class="col-sm-4">Kullanıcı</dt>
+                                <dd class="col-sm-8">@Model.User?.KullaniciAdi</dd>
+
+                                <dt class="col-sm-4">Oyun ID</dt>
+                                <dd class="col-sm-8">@Model.OyunId</dd>
+
+                                <dt class="col-sm-4">Kullanıcı ID</dt>
+                                <dd class="col-sm-8">@Model.UserId</dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Listeye Dön
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,118 @@
+@model OyunKedisi.Models.User
+
+@{
+    ViewData["Title"] = "Profil Düzenle";
+}
+
+<style>
+    :root {
+        --primary-purple: #6B46C1;
+        --light-purple: #9F7AEA;
+        --primary-orange: #ED8936;
+        --light-orange: #FBD38D;
+        --white: #FFFFFF;
+        --gray: #F7FAFC;
+    }
+
+    .profile-edit-header {
+        background: linear-gradient(135deg, var(--primary-purple), var(--light-purple));
+        color: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container {
+        background-color: var(--white);
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--primary-purple);
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-purple);
+        box-shadow: 0 0 0 0.2rem rgba(107, 70, 193, 0.25);
+    }
+
+    .btn-orange {
+        background-color: var(--primary-orange);
+        border-color: var(--primary-orange);
+        color: white;
+    }
+
+    .btn-orange:hover {
+        background-color: var(--light-orange);
+        border-color: var(--light-orange);
+        color: #333;
+    }
+
+    .btn-purple {
+        background-color: var(--primary-purple);
+        border-color: var(--primary-purple);
+        color: white;
+    }
+
+    .btn-purple:hover {
+        background-color: var(--light-purple);
+        border-color: var(--light-purple);
+        color: white;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="profile-edit-header">
+        <h1>Profil Bilgilerini Düzenle</h1>
+        <p>Kişisel bilgilerinizi güncelleyebilirsiniz.</p>
+    </div>
+
+    <div class="form-container">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="YetkiId" />
+
+            <div class="form-group">
+                <label asp-for="KullaniciAdi" class="form-label">Kullanıcı Adı</label>
+                <input asp-for="KullaniciAdi" class="form-control" />
+                <span asp-validation-for="KullaniciAdi" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Mail" class="form-label">E-posta</label>
+                <input asp-for="Mail" class="form-control" />
+                <span asp-validation-for="Mail" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="SifreHash" class="form-label">Şifre</label>
+                <input asp-for="SifreHash" class="form-control" type="password" />
+                <span asp-validation-for="SifreHash" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Yas" class="form-label">Yaş</label>
+                <input asp-for="Yas" class="form-control" />
+                <span asp-validation-for="Yas" class="text-danger"></span>
+            </div>
+
+            <div class="form-group d-flex justify-content-between mt-4">
+                <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                <button type="submit" class="btn btn-orange">Kaydet</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

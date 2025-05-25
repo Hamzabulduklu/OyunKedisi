@@ -1,0 +1,333 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - OyunKedisi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.min.css" />
+    <style>
+        :root {
+            --primary-purple: #6B46C1;
+            --light-purple: #9F7AEA;
+            --primary-orange: #ED8936;
+            --light-orange: #FBD38D;
+            --white: #FFFFFF;
+            --gray: #F7FAFC;
+        }
+
+        body {
+            background-color: var(--gray);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background-color: var(--primary-purple) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            color: var(--white) !important;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--white) !important;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--light-orange) !important;
+        }
+
+        .navbar-toggler {
+            border-color: var(--white);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .btn-primary {
+            background-color: var(--primary-purple);
+            border-color: var(--primary-purple);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--light-purple);
+            border-color: var(--light-purple);
+        }
+
+        .btn-secondary {
+            background-color: var(--primary-orange);
+            border-color: var(--primary-orange);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--light-orange);
+            border-color: var(--light-orange);
+            color: #333;
+        }
+
+        .footer {
+            background-color: var(--primary-purple);
+            color: var(--white) !important;
+            padding: 1rem 0;
+            margin-top: 2rem;
+        }
+
+        .footer a {
+            color: var(--light-orange) !important;
+        }
+
+        .footer a:hover {
+            color: var(--white) !important;
+            text-decoration: none;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-menu .btn {
+            margin-left: 10px;
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--light-purple);
+            color: var(--white);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Form Styles */
+        .form-control:focus {
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 0.2rem rgba(107, 70, 193, 0.25);
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--primary-purple);
+        }
+
+        /* Card Styles */
+        .card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background-color: var(--primary-purple);
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-spinner.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--primary-purple);
+            border-top: 5px solid var(--light-orange);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Button Loading State */
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin: -8px 0 0 -8px;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: button-spin 0.6s linear infinite;
+        }
+
+        @@keyframes button-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* SweetAlert2 Custom Styles */
+        .swal2-popup {
+            font-size: 0.9rem !important;
+            font-family: inherit !important;
+        }
+
+        .swal2-title {
+            color: var(--primary-purple) !important;
+        }
+
+        .swal2-confirm {
+            background-color: var(--primary-purple) !important;
+        }
+
+        .swal2-cancel {
+            background-color: var(--primary-orange) !important;
+        }
+    </style>
+</head>
+<body>
+    @if (!Context.Request.Path.StartsWithSegments("/Users/Login") && !Context.Request.Path.StartsWithSegments("/Users/Register"))
+    {
+        <nav b-39uspz94uh="" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3">
+            <div b-39uspz94uh="" class="container">
+                <a class="navbar-brand" href="/">
+                    <img src="/assets/OyunKedisiLogo.png" alt="OyunKedisi Logo" height="40" class="me-2">
+                    OyunKedisi
+                </a>
+                <button b-39uspz94uh="" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span b-39uspz94uh="" class="navbar-toggler-icon"></span>
+                </button>
+                <div b-39uspz94uh="" class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul b-39uspz94uh="" class="navbar-nav flex-grow-1">
+                        <li b-39uspz94uh="" class="nav-item">
+                            <a class="nav-link" href="/">Ana Sayfa</a>
+                        </li>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <li b-39uspz94uh="" class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="AdminPanel">
+                                    <i class="fas fa-cog me-1"></i>Admin Paneli
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                    <div b-39uspz94uh="" class="user-menu">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <div class="dropdown">
+                                <button class="btn btn-link nav-link dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-circle me-1"></i>@User.Identity.Name
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                                    <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index"><i class="fas fa-user me-2"></i>Profilim</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form asp-controller="Users" asp-action="Logout" method="post" style="display: inline;">
+                                            <button type="submit" class="dropdown-item">
+                                                <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        else if (!Context.Request.Path.StartsWithSegments("/Users/Login") && !Context.Request.Path.StartsWithSegments("/Users/Register"))
+                        {
+                            <a class="btn btn-outline-light me-2" asp-controller="Users" asp-action="Login">Giriş</a>
+                            <a class="btn btn-outline-warning" asp-controller="Users" asp-action="Register">Kayıt Ol</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </nav>
+    }
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - OyunKedisi - <a asp-area="" asp-controller="Home" asp-action="Privacy">Gizlilik</a>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.all.min.js"></script>
+    <script>
+        // SweetAlert2 Türkçe dil desteği
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        // Global loading fonksiyonu
+        function showLoading() {
+            document.querySelector('.loading-spinner').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.querySelector('.loading-spinner').classList.remove('active');
+        }
+
+        // Global toast mesaj fonksiyonu
+        function showToast(icon, title) {
+            Toast.fire({
+                icon: icon,
+                title: title
+            });
+        }
+
+        // Sayfa yüklendiğinde loading'i gizle
+        document.addEventListener('DOMContentLoaded', function() {
+            hideLoading();
+        });
+
+        // Sayfa yüklenirken loading'i göster
+        window.addEventListener('beforeunload', function() {
+            showLoading();
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
